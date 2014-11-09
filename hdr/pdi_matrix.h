@@ -7,15 +7,15 @@ Version: 1.0
 #ifndef PDI_MATRIX_H
 #define PDI_MATRIX_H
 
-#include <iostream>
+#include <cstdio>
 #include <memory.h>
-#include "pdi_images.h"
 
 #define PDI_MATRIX_SUCCESS	1
 #define PDI_MATRIX_FAIL		0
 
 class PdiMatrix {
 public:
+	PdiMatrix(void);
 	PdiMatrix(int *codep);
 	PdiMatrix(float **matrixp, int widthp, int heightp, int *codep);
 	void init(int widthp, int heightp);

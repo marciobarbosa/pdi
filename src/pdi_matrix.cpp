@@ -6,6 +6,10 @@ Version: 1.0
 
 #include "../hdr/pdi_matrix.h"
 
+PdiMatrix::PdiMatrix(void) {
+	this->matrix = NULL;
+}
+
 PdiMatrix::PdiMatrix(int *codep) {
 	this->matrix = NULL;
 	*codep = PDI_MATRIX_FAIL;

@@ -4,19 +4,21 @@ Email: mbb2@cin.ufpe.br
 Version: 1.0
 **/
 
-#include <iostream>
+#include <cstdio>
 #include <cstdlib>
 #include "../hdr/pdi_images.h"
 #include "../hdr/pdi_matrix.h"
+#include "../hdr/sc_matrixproducer.h"
+#include "../hdr/sc_matrixconsumer.h"
 
-using namespace std;
-
-int main(int argc, char *argv[])
+int sc_main(int argc, char *argv[])
 {
 	int code;
 	PdiImage img(&code);
 	float **raw_img_red, **raw_img_green, **raw_img_blue;
-	PdiMatrix Y(&code), Cb(&code), Cr(&code), aux(&code);
+	sc_fifo<float> myFifo_1(1), myFifo_2(1), myFifo_3(1);
+	MatrixProducer prod("Producer");
+	MatrixConsumer cons("Consumer");
 
 	if (argc != 3) {
 		printf("usage: ./pdi image_path output_name\n");
@@ -49,25 +51,23 @@ int main(int argc, char *argv[])
 		return EXIT_FAILURE;
 	}
 
-	Y.setMatrix(raw_img_red, img.getWidth(), img.getHeight(), &code);
-	Y.sub(raw_img_green, img.getWidth(), img.getHeight(), &code);
-	Y.multConst(img.getWidth(), img.getHeight(), 0.299, &code);
-	Y.add(raw_img_green, img.getWidth(), img.getHeight(), &code);
-	aux.setMatrix(raw_img_blue, img.getWidth(), img.getHeight(), &code);
-	aux.sub(raw_img_green, img.getWidth(), img.getHeight(), &code);
-	aux.multConst(img.getWidth(), img.getHeight(), 0.114, &code);
-	Y.add(aux.getMatrix(), img.getWidth(), img.getHeight(), &code);
+	prod.configMat(img.getHeight(), img.getWidth());
+	prod.setMat(raw_img_red, raw_img_green, raw_img_blue);
 
-	Cb.setMatrix(raw_img_blue, img.getWidth(), img.getHeight(), &code);
-	Cb.sub(Y.getMatrix(), img.getWidth(), img.getHeight(), &code);
-	Cb.multConst(img.getWidth(), img.getHeight(), 0.564, &code);
+	prod.fifoOutPort_1(myFifo_1);
+  	prod.fifoOutPort_2(myFifo_2);
+  	prod.fifoOutPort_3(myFifo_3);
 
-	Cr.setMatrix(raw_img_red, img.getWidth(), img.getHeight(), &code);
-	Cr.sub(Y.getMatrix(), img.getWidth(), img.getHeight(), &code);
-	Cr.multConst(img.getWidth(), img.getHeight(), 0.713, &code);
+  	cons.fifoInPort_1(myFifo_1);
+  	cons.fifoInPort_2(myFifo_2);
+  	cons.fifoInPort_3(myFifo_3);
 
-	if (!img.thresholdImage(argv[2], Y.getMatrix(), Cb.getMatrix(), Cr.getMatrix(), img.getWidth(), img.getHeight()))
+  	sc_start();
+
+  	if (!img.thresholdImage(argv[2], cons.Y->getMatrix(), cons.Cb->getMatrix(), cons.Cr->getMatrix(), img.getWidth(), img.getWidth()))
 		printf("Could not save the image!\n");
+	else
+		printf("Image received!\n");
 
 	for (int i = 0; i < img.getHeight(); i++) {
     	delete [] raw_img_red[i];
@@ -79,10 +79,15 @@ int main(int argc, char *argv[])
 	delete [] raw_img_green;
 	delete [] raw_img_blue;
 
-	Y.cleanUp(img.getWidth(), img.getHeight());
-	Cb.cleanUp(img.getWidth(), img.getHeight());
-	Cr.cleanUp(img.getWidth(), img.getHeight());
-	aux.cleanUp(img.getWidth(), img.getHeight());
+	cons.Y->cleanUp(img.getWidth(), img.getHeight());
+	cons.Cb->cleanUp(img.getWidth(), img.getHeight());
+	cons.Cr->cleanUp(img.getWidth(), img.getHeight());
+	cons.aux->cleanUp(img.getWidth(), img.getHeight());
+
+	delete [] cons.Y;
+	delete [] cons.Cb;
+	delete [] cons.Cr;
+	delete [] cons.aux;
 
 	return EXIT_SUCCESS;
 }
