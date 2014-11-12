@@ -1,3 +1,9 @@
+/*
+Developed by Marcio Brito Barbosa;
+Email: mbb2@cin.ufpe.br
+Version: 1.1
+**/
+
 #ifndef __MATRIX_PRODUCER_H__
 #define __MATRIX_PRODUCER_H__
 

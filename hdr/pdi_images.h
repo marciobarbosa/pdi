@@ -1,7 +1,7 @@
 /*
 Developed by Marcio Brito Barbosa;
 Email: mbb2@cin.ufpe.br
-Version: 1.0
+Version: 1.1
 **/
 
 #ifndef PDI_IMAGES_H

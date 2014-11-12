@@ -1,7 +1,7 @@
 /*
 Developed by Marcio Brito Barbosa;
 Email: mbb2@cin.ufpe.br
-Version: 1.0
+Version: 1.1
 **/
 
 #include <cstdio>
@@ -64,7 +64,7 @@ int sc_main(int argc, char *argv[])
 
   	sc_start();
 
-  	if (!img.thresholdImage(argv[2], cons.Y->getMatrix(), cons.Cb->getMatrix(), cons.Cr->getMatrix(), img.getWidth(), img.getWidth()))
+  	if (!img.thresholdImage(argv[2], cons.Y->getMatrix(), cons.Cb->getMatrix(), cons.Cr->getMatrix(), img.getWidth(), img.getHeight()))
 		printf("Could not save the image!\n");
 	else
 		printf("Image received!\n");

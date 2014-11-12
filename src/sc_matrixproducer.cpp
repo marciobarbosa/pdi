@@ -1,3 +1,9 @@
+/*
+Developed by Marcio Brito Barbosa;
+Email: mbb2@cin.ufpe.br
+Version: 1.1
+**/
+
 #include "../hdr/sc_matrixproducer.h"
 
 MatrixProducer::MatrixProducer(sc_module_name name) : sc_module(name) {
@@ -57,14 +63,14 @@ void MatrixProducer::run(void) {
 	while (1) {
 		if (first) {
 			first = false;
-			fifoOutPort_1.write(this->lines);
-			fifoOutPort_2.write(this->lines);
-			fifoOutPort_3.write(this->lines);
-		} else if (second) {
-			second = false;
 			fifoOutPort_1.write(this->columns);
 			fifoOutPort_2.write(this->columns);
 			fifoOutPort_3.write(this->columns);
+		} else if (second) {
+			second = false;
+			fifoOutPort_1.write(this->lines);
+			fifoOutPort_2.write(this->lines);
+			fifoOutPort_3.write(this->lines);
 		} else {
 			count++;
 
